@@ -1,21 +1,25 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
-import { eq } from "drizzle-orm";
-import { experiencesTable } from "./schema";
+import { experiencesTable, user } from "./schema";
 import { env } from "../../utils/env";
- 
+import { faker } from "@faker-js/faker";
+
 const db = drizzle(env.DATABASE_URL);
 
 async function main() {
-  for (let i = 0; i < 10; i++) {
+  const [findUser] = await db.select().from(user);
+
+  if (!findUser) {
+    console.log("User not found");
+    return;
+  }
+  for (let i = 0; i < 30; i++) {
     await db.insert(experiencesTable).values({
-      title: `Experience ${i}`,
-      content: `Content ${i}`,
-      scheduledAt: new Date(),
+      title: faker.lorem.sentence(),
+      content: faker.lorem.paragraph(),
+      scheduledAt: faker.date.soon(),
+      userId: findUser.id,
     });
   }
-
-  console.log("Experiences created!");
 }
-
 main();
