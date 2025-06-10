@@ -1,69 +1,17 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import { authClient } from "./utils/auth-client";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClientProvider, useInfiniteQuery } from "@tanstack/react-query";
 import { queryClient, trpc } from "./utils/trpc";
+import { ThemeProvider } from "./components/theme-provider";
+import { ModeToggle } from "./components/MoodeToggle";
+import InfiniteScroll from "./components/InfinitScroll";
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const handleSignUp = async () => {
-    await authClient.signUp.email({
-      email: "test1@test.com",
-      name: "test1",
-      password: "mm+mm+123456",
-
-      fetchOptions: {
-        onRequest: () => {
-          setIsLoading(true);
-        },
-
-        onResponse: () => {
-          setIsLoading(false);
-        },
-        onSuccess: () => {
-          setIsSuccess(true);
-        },
-        onError: (ctx) => {
-          console.log(ctx);
-          setError(ctx.error.message);
-        },
-      },
-    });
-  };
-
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        {isSuccess && <div>Success</div>}
-        {isLoading && <div>Loading</div>}
-        {error && <div>Error {error}</div>}
-        <div>
-          <a href="https://vite.dev" target="_blank">
-            <img src={viteLogo} className="logo" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
-        </div>
-        <h1>Vite + React</h1>
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
-        </p>
-        <button onClick={handleSignUp}>Sign Up</button>
-        <Greeting />
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <ModeToggle />
+          <Index />
+        </ThemeProvider>
       </QueryClientProvider>
     </>
   );
@@ -71,18 +19,63 @@ function App() {
 
 export default App;
 
-function Greeting() {
-  const { data, isLoading, error } = useQuery(
-    trpc.experience.feed.queryOptions()
+function Index() {
+  const experiences = useInfiniteQuery(
+    trpc.experience.feed.infiniteQueryOptions(
+      {},
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    )
   );
-  console.log(error);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
   return (
-    <div className="flex flex-col gap-2">
-      {data?.map((item) => (
-        <div key={item.id}>{item.title}</div>
+    <InfiniteScroll
+      onLoadMore={experiences.fetchNextPage}
+      hasMore={experiences.hasNextPage}
+      loading={experiences.isFetchingNextPage}
+      endMessage={
+        <div className="text-center py-8">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-primary"
+            >
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </div>
+          <p className="text-xl font-semibold">All caught up!</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            You've viewed all available items
+          </p>
+        </div>
+      }
+    >
+      <ExperienceList
+        experiences={
+          experiences.data?.pages.flatMap((page) => page.experiences) ?? []
+        }
+      />
+    </InfiniteScroll>
+  );
+}
+
+function ExperienceList({ experiences }: { experiences: any[] }) {
+  return (
+    <div>
+      {experiences.map((experience) => (
+        <div key={experience.id} className="border p-25">
+          {experience.title}
+        </div>
       ))}
     </div>
   );
