@@ -3,17 +3,19 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "../utils/auth";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
-import { createContext, protectedProcedure, publicProcedure, router } from "./trpc";
+import { createContext, publicProcedure, router } from "./trpc";
+import { experienceRouter } from "./features/experience/routes";
 
 const appRouter = router({
-  greeting: protectedProcedure.query(() => "hello tRPC v10!"),
+  greeting: publicProcedure.query(() => "hello tRPC v10!"),
+  experience: experienceRouter,
 });
 export type AppRouter = typeof appRouter;
 
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

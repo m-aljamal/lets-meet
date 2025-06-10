@@ -9,9 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.80.6",
+    "@trpc/client": "^11.3.1",
+    "@trpc/server": "^11.3.1",
+    "@trpc/tanstack-react-query": "^11.3.1",
     "better-auth": "^1.2.8",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "@lets-meet/shared": "workspace:*",
+    "@lets-meet/server": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

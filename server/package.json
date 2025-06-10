@@ -10,6 +10,9 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx ./src/db/seed.ts"
   },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
