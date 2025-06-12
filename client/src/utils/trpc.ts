@@ -1,7 +1,7 @@
 import type { AppRouter } from "@lets-meet/server";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 export const queryClient = new QueryClient();
 
 const trpcClient = createTRPCClient<AppRouter>({

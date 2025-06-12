@@ -22,3 +22,5 @@ export const experiencesTable = pgTable(
   },
   (table) => [index("experiences_user_id_idx").on(table.userId)]
 );
+
+export type Experience = typeof experiencesTable.$inferSelect;

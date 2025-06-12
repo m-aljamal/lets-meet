@@ -1,7 +1,7 @@
 packages:
-  - client
   - server
   - shared
+  - frontend
 ignoredBuiltDependencies:
   - better-sqlite3
   - esbuild
