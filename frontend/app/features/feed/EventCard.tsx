@@ -1,4 +1,4 @@
-import { HeartIcon, Users } from "lucide-react";
+import { HeartIcon, MessageCircleIcon, Users } from "lucide-react";
 import { Link } from "react-router";
 import type { ExperienceForFeed } from "./types";
 
@@ -8,6 +8,7 @@ export function EventCard({
   imageUrl,
   location,
   content,
+  commentsCount,
   scheduledAt,
   url
 }: ExperienceForFeed) {
@@ -35,6 +36,10 @@ export function EventCard({
         <div className="flex items-center text-sm text-gray-500 mb-4">
           <Users className="h-5 w-5 mr-1" />
           <span>{25} attending</span>
+        </div>
+        <div className="flex items-center text-sm text-gray-500 mb-4">
+          <MessageCircleIcon className="h-5 w-5 mr-1" />
+          <span>{commentsCount} comments</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">

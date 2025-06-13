@@ -45,7 +45,7 @@ export default function Feed() {
   );
 }
 
-function EventList({ events }: { events: ExperienceForFeed[]}) {
+function EventList({ events }: { events: ExperienceForFeed[] }) {
   return (
     <div className="space-y-8">
       {events.map((event) => (

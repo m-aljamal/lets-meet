@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
-import { experiencesTable, user } from "./schema";
+import { commentTable, experiencesTable, user } from "./schema";
 import { env } from "../../utils/env";
 import { faker } from "@faker-js/faker";
 
@@ -20,6 +20,16 @@ async function main() {
       scheduledAt: faker.date.soon(),
       userId: findUser.id,
     });
+  }
+  const [experience] = await db.select().from(experiencesTable);
+  if (experience) {
+    for (let i = 0; i < 3; i++) {
+      await db.insert(commentTable).values({
+        content: faker.lorem.sentence(),
+        userId: findUser.id,
+        experienceId: experience.id,
+      });
+    }
   }
 }
 main();

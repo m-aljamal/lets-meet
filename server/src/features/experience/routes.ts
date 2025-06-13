@@ -1,9 +1,9 @@
 import { DEFAULT_EXPERIENCE_LIMIT } from "./../../../../client/src/utils/constants";
 import z from "zod";
 import db from "../../db";
-import { experiencesTable } from "../../db/schema";
+import { commentTable, experiencesTable } from "../../db/schema";
 import { publicProcedure, router } from "../../trpc";
-import { desc } from "drizzle-orm";
+import { desc, eq, getTableColumns } from "drizzle-orm";
 
 export const experienceRouter = router({
   feed: publicProcedure
@@ -18,7 +18,13 @@ export const experienceRouter = router({
       const cursor = input.cursor ?? 0;
 
       const experiences = await db
-        .select()
+        .select({
+          ...getTableColumns(experiencesTable),
+          commentsCount: db.$count(
+            commentTable,
+            eq(commentTable.experienceId, experiencesTable.id)
+          ),
+        })
         .from(experiencesTable)
         .orderBy(desc(experiencesTable.createdAt))
         .limit(limit ?? DEFAULT_EXPERIENCE_LIMIT)
