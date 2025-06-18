@@ -26,8 +26,7 @@ export async function createContext(
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(headers),
   });
-  console.log({session, headers});
-  if (!session) {
+   if (!session) {
     return context;
   }
 

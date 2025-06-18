@@ -14,7 +14,7 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { useTRPC } from "trpc/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type CommentCreateForm = z.infer<typeof createCommentSchema>;
 
@@ -24,7 +24,25 @@ export default function CommentForm({
   experienceId: Experience["id"];
 }) {
   const trpc = useTRPC();
-  const addComment = useMutation(trpc.comments.addComment.mutationOptions());
+  const queryClient = useQueryClient();
+  const addComment = useMutation(
+    trpc.comments.addComment.mutationOptions({
+      onSuccess:  () => {
+        form.reset();
+        queryClient.invalidateQueries(
+          trpc.comments.byExperienceId.queryOptions({
+            experienceId,
+          })
+        );
+        queryClient.invalidateQueries(
+          trpc.experience.feed.infiniteQueryOptions({})
+        );
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    })
+  );
   const form = useForm<CommentCreateForm>({
     resolver: zodResolver(createCommentSchema),
     defaultValues: {
@@ -55,7 +73,12 @@ export default function CommentForm({
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          disabled={addComment.isPending}
+          type="submit"
+        >
+          {addComment.isPending ? "Adding..." : "Submit"}
+        </Button>
       </form>
     </Form>
   );

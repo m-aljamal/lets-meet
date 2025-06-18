@@ -11,6 +11,5 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const {data,error,isPending,refetch} = authClient.useSession()
-  console.log({data,error,isPending,refetch})
   return <Feed/>
 }

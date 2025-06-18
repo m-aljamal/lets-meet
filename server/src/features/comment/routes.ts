@@ -1,8 +1,13 @@
 import z from "zod";
 import { protectedProcedure, publicProcedure, router } from "../../trpc";
-import { commentTable, experienceSelectSchema } from "../../db/schema";
+import {
+  commentTable,
+  experienceSelectSchema,
+  experiencesTable,
+} from "../../db/schema";
 import db from "../../db";
 import { eq } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
 
 export const commentRouter = router({
   byExperienceId: publicProcedure
@@ -28,7 +33,24 @@ export const commentRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const now = new Date().toISOString();
-      console.log(input.experienceId, input.content);
+      const [experience] = await db
+        .select()
+        .from(experiencesTable)
+        .where(eq(experiencesTable.id, input.experienceId));
+      if (!experience) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Experience not found",
+        });
+      }
+      const [comment] = await db
+        .insert(commentTable)
+        .values({
+          content: input.content,
+          experienceId: input.experienceId,
+          userId: ctx.user.id,
+        })
+        .returning();
+      return comment;
     }),
 });
