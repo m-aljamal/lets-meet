@@ -3,6 +3,7 @@ import { queryClient, trpc } from "./utils/trpc";
 import { ThemeProvider } from "./components/theme-provider";
 import { ModeToggle } from "./components/MoodeToggle";
 import InfiniteScroll from "./components/InfinitScroll";
+import Signin from "./auth/Signin";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <ModeToggle />
+          <Signin />
           <Index />
         </ThemeProvider>
       </QueryClientProvider>

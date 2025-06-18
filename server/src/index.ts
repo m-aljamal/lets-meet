@@ -5,10 +5,11 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import { createContext, publicProcedure, router } from "./trpc";
 import { experienceRouter } from "./features/experience/routes";
+import { commentRouter } from "./features/comment/routes";
 
 const appRouter = router({
-  greeting: publicProcedure.query(() => "hello tRPC v10!"),
   experience: experienceRouter,
+  comments: commentRouter,
 });
 export type AppRouter = typeof appRouter;
 
@@ -20,8 +21,8 @@ app.use(
     credentials: true,
   })
 );
-app.all("/api/auth/{*any}", toNodeHandler(auth));
 
+app.all("/api/auth/{*any}", toNodeHandler(auth));
 app.use(express.json());
 
 app.use(

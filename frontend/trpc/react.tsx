@@ -31,12 +31,12 @@ const links = [
       (op.direction === "down" && op.result instanceof Error),
   }),
   httpBatchLink({
-   
     url: "http://localhost:3005",
-    headers() {
-      const headers = new Headers();
-      headers.set("x-trpc-source", "react");
-      return headers;
+    fetch(url, options) {
+      return fetch(url, {
+        ...(options as RequestInit),
+        credentials: "include",
+      });
     },
   }),
 ];

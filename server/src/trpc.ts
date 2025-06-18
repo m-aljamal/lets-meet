@@ -19,15 +19,14 @@ export async function createContext(
   };
 
   const headers = opts.req.headers;
-
-  if (!headers) {
+   if (!headers) {
     return context;
   }
 
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(headers),
   });
-
+  console.log({session, headers});
   if (!session) {
     return context;
   }

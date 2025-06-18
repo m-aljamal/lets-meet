@@ -1,6 +1,8 @@
 import { HeartIcon, MessageCircleIcon, Users } from "lucide-react";
 import { Link } from "react-router";
 import type { ExperienceForFeed } from "./types";
+import CommentsSection from "../comments/CommentsSection";
+import { Card } from "~/components/ui/card";
 
 export function EventCard({
   id,
@@ -13,7 +15,7 @@ export function EventCard({
   url
 }: ExperienceForFeed) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <Card className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="relative h-48">
         <img
           src={imageUrl ?? undefined}
@@ -37,10 +39,7 @@ export function EventCard({
           <Users className="h-5 w-5 mr-1" />
           <span>{25} attending</span>
         </div>
-        <div className="flex items-center text-sm text-gray-500 mb-4">
-          <MessageCircleIcon className="h-5 w-5 mr-1" />
-          <span>{commentsCount} comments</span>
-        </div>
+       
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">
             <p>{new Date(scheduledAt).toLocaleDateString()}</p>
@@ -66,6 +65,7 @@ export function EventCard({
           </div>
         </div>
       </div>
-    </div>
+      <CommentsSection commentsCount={commentsCount} eventId={id} />
+    </Card>
   );
 }

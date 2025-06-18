@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp, varchar, index } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
 import { user } from "../auth/models";
+import { createSelectSchema } from "drizzle-zod";
 
 export const experiencesTable = pgTable(
   "experiences",
@@ -24,3 +25,5 @@ export const experiencesTable = pgTable(
 );
 
 export type Experience = typeof experiencesTable.$inferSelect;
+
+export const experienceSelectSchema = createSelectSchema(experiencesTable);

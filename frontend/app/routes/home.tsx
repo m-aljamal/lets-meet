@@ -1,5 +1,6 @@
 import Feed from "~/features/feed";
 import type { Route } from "../+types/root";
+import { authClient } from "~/lib/auth-client";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,5 +10,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const {data,error,isPending,refetch} = authClient.useSession()
+  console.log({data,error,isPending,refetch})
   return <Feed/>
 }

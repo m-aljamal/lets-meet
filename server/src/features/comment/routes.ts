@@ -1,6 +1,6 @@
 import z from "zod";
-import { publicProcedure, router } from "../../trpc";
-import { commentTable } from "../../db/schema";
+import { protectedProcedure, publicProcedure, router } from "../../trpc";
+import { commentTable, experienceSelectSchema } from "../../db/schema";
 import db from "../../db";
 import { eq } from "drizzle-orm";
 
@@ -18,5 +18,17 @@ export const commentRouter = router({
         .from(commentTable)
         .where(eq(commentTable.experienceId, experienceId));
       return comments;
+    }),
+
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        experienceId: z.string(),
+        content: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const now = new Date().toISOString();
+      console.log(input.experienceId, input.content);
     }),
 });

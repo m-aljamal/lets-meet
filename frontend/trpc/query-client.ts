@@ -1,3 +1,4 @@
+import { links } from './../app/root';
 import {
   defaultShouldDehydrateQuery,
   QueryClient,
@@ -5,6 +6,7 @@ import {
 import superjson from "superjson";
 export function makeQueryClient() {
   return new QueryClient({
+
     defaultOptions: {
       queries: {
         staleTime: 30 * 1000,
