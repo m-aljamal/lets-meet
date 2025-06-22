@@ -1,20 +1,21 @@
-import { QueryClientProvider, useInfiniteQuery } from "@tanstack/react-query";
-import { queryClient, trpc } from "./utils/trpc";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/theme-provider";
 import { ModeToggle } from "./components/MoodeToggle";
 import InfiniteScroll from "./components/InfinitScroll";
 import Signin from "./auth/Signin";
+import { TRPCReactProvider } from "./trpc/react";
+import { trpc } from "./router";
 
 function App() {
   return (
     <>
-      <QueryClientProvider client={queryClient}>
+      <TRPCReactProvider>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <ModeToggle />
           <Signin />
           <Index />
         </ThemeProvider>
-      </QueryClientProvider>
+      </TRPCReactProvider>
     </>
   );
 }
@@ -22,7 +23,7 @@ function App() {
 export default App;
 
 function Index() {
-  const experiences = useInfiniteQuery(
+   const experiences = useInfiniteQuery(
     trpc.experience.feed.infiniteQueryOptions(
       {},
       {

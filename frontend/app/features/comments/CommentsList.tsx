@@ -24,6 +24,7 @@ export default function CommentsList({ eventId, commentsCount }: Props) {
       {comments.isLoading && <div>Loading...</div>}
       {comments.data?.map((comment) => (
         <CommentCard key={comment.id} comment={comment} />
+        
       ))}
     </div>
   );

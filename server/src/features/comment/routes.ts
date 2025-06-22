@@ -6,7 +6,7 @@ import {
   experiencesTable,
 } from "../../db/schema";
 import db from "../../db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const commentRouter = router({
@@ -52,5 +52,39 @@ export const commentRouter = router({
         })
         .returning();
       return comment;
+    }),
+
+  updateComment: protectedProcedure
+    .input(
+      z.object({
+        commentId: z.string(),
+        content: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [comment] = await db
+        .update(commentTable)
+        .set({ content: input.content })
+        .where(
+          and(
+            eq(commentTable.id, input.commentId),
+            eq(commentTable.userId, ctx.user.id)
+          )
+        )
+        .returning();
+      return comment;
+    }),
+
+  deleteComment: protectedProcedure
+    .input(z.object({ commentId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await db
+        .delete(commentTable)
+        .where(
+          and(
+            eq(commentTable.id, input.commentId),
+            eq(commentTable.userId, ctx.user.id)
+          )
+        );
     }),
 });

@@ -35,4 +35,29 @@ export const experienceRouter = router({
         nextCursor: experiences.length === limit ? cursor + limit : undefined,
       };
     }),
+  byId: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const [experience] = await db
+        .select({
+          ...getTableColumns(experiencesTable),
+          commentsCount: db.$count(
+            commentTable,
+            eq(commentTable.experienceId, experiencesTable.id)
+          ),
+        })
+        .from(experiencesTable)
+        .where(eq(experiencesTable.id, input.id))
+        .limit(1);
+
+      if (!experience) {
+        throw new Error("Experience not found");
+      }
+
+      return experience;
+    }),
 });
